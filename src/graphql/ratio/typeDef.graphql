@@ -1,0 +1,21 @@
+input  RatioInput {
+    name: String
+    description: String
+    a: Float
+    b: Float 
+}
+type Ratio {
+    id: Int
+    name: String
+    description: String
+    a: Float
+    b: Float
+
+}
+type Query {
+    ratios: [Ratio!]!
+    ratio(id: Int!): Ratio!
+}
+type Mutation {
+    createRatio(input: RatioInput): Ratio!
+}

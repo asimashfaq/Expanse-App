@@ -27,6 +27,7 @@ export default class Server {
 
             const result = await createModels(sequelizeConfig)
             result.db.sequelize.sync()
+            //result.db.sequelize.sync({ force: true })
             const schema = applyMiddleware(
                 makeExecutableSchema({
                     typeDefs,
