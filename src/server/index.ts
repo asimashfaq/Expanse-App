@@ -3,16 +3,20 @@ import { Request } from '@hapi/hapi'
 import { applyMiddleware } from 'graphql-middleware'
 import { shield } from 'graphql-shield'
 import { makeExecutableSchema } from 'graphql-tools'
+import sequelize from 'sequelize'
 import sequelizeConfig from '../db/config/config.json'
 import { resolvers, typeDefs } from '../graphql'
-import HelloPermission from '../graphql/hello/permission'
+import HelloPermission from '../graphql/expanses/permission'
 import { getUser } from '../helper/authentication.js'
 import Logger from '../helper/logger'
+import { RatioLoader } from '../modules/ratio/loader.js'
+import { UserLoader } from '../modules/users/loader'
 import { createModels } from './../db/models/index'
 const { ApolloServer } = require('apollo-server-hapi')
+var Op = sequelize.Op
 
 const permissions = shield({
-    Query: {
+    Mutation: {
         ...HelloPermission
     }
 })
@@ -43,7 +47,9 @@ export default class Server {
                         ...request,
                         db: result.db,
                         enforcer: result.enforcer,
-                        user: await getUser(result.db, request)
+                        user: await getUser(result.db, request),
+                        ratioLoader: RatioLoader(result.db),
+                        userLoader: UserLoader(result.db)
                     }
                 }
             })

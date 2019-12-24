@@ -37,6 +37,7 @@
     "boom": "^7.3.0",
     "casbin": "^3.0.5",
     "casbin-sequelize-adapter": "^2.0.0",
+    "dataloader": "^2.0.0",
     "dotenv": "^8.2.0",
     "graphql-middleware": "^4.0.1",
     "graphql-shield": "^7.0.0",

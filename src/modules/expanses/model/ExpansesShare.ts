@@ -4,6 +4,9 @@ import { SequelizeAttributes } from '../../../interfaces/SequelizeAttributes'
 export interface ExpansesShareAttributes {
     id?: number
     amount: number
+    userId: number
+    expansesId: number
+    status: string
     createdAt?: Date
     updatedAt?: Date
 }
@@ -17,7 +20,10 @@ export const ExpanseShareFactory = (
     DataTypes: Sequelize.DataTypes
 ) => {
     const attributes: SequelizeAttributes<ExpansesShareAttributes> = {
-        amount: DataTypes.INTEGER
+        amount: DataTypes.INTEGER,
+        userId: DataTypes.INTEGER,
+        expansesId: DataTypes.INTEGER,
+        status: DataTypes.STRING
     }
 
     const ExpansesShares = sequelize.define<

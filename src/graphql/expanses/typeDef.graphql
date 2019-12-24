@@ -1,0 +1,26 @@
+input ExpansesInput{
+    id: Int
+    name: String!
+    description: String
+    total_amount: Float!
+    ratioId: Int!
+    shares_with: [Int!]!
+}
+
+type Expanses{
+    id: Int
+    name: String!
+    description: String
+    total_amount: Float!
+    ratio: Ratio!
+    user: User!
+    createdAt: String
+    updatedAt: String
+}
+type Query {
+  expanses: [Expanses!]!
+  expanse(id: Int!): Expanses!
+}
+type Mutation {
+    createExpanses(input:ExpansesInput): Expanses!
+}

@@ -12,8 +12,13 @@ import { TokenFactory } from '../../modules/token/model/Token'
 import { UserFactory } from '../../modules/users/model/User'
 
 const env = process.env.NODE_ENV || 'development'
-
-export const createModels = async (sequelizeConfig: any): Promise<any> => {
+interface DbEnforcer {
+    db: DbInterface
+    enforcer: Enforcer
+}
+export const createModels = async (
+    sequelizeConfig: any
+): Promise<DbEnforcer> => {
     const sequelize: Sequelize.Sequelize = new Sequelize(sequelizeConfig[env])
     const a = await SequelizeAdapter.newAdapter(
         sequelizeConfig[env] as SequelizeOptions
