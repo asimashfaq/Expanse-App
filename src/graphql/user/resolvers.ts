@@ -7,7 +7,9 @@ const resolvers: IResolvers = {
         users: async (_, __, { db }: { db: DbInterface }) => {
             return await new UserController(db).list()
         },
-        user: async (_, { id }, { db }: { db: DbInterface }) => {}
+        user: async (_, { id }, { db }: { db: DbInterface }) => {
+            return await db.User.findByPk(id)
+        }
     },
     Mutation: {
         createUser: async (

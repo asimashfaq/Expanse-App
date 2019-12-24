@@ -6,7 +6,18 @@ input ExpansesInput{
     ratioId: Int!
     shares_with: [Int!]!
 }
-
+type Balance {
+    receivable: Float
+    paid: Float
+    received: Float
+}
+type ExpansesShare{
+    id: Int
+    amount: Float
+    user: User!
+    expansesId: Int
+    status: String
+}
 type Expanses{
     id: Int
     name: String!
@@ -14,12 +25,14 @@ type Expanses{
     total_amount: Float!
     ratio: Ratio!
     user: User!
+    expansesShare: [ExpansesShare!]!
     createdAt: String
     updatedAt: String
 }
 type Query {
   expanses: [Expanses!]!
   expanse(id: Int!): Expanses!
+  balance: Balance!
 }
 type Mutation {
     createExpanses(input:ExpansesInput): Expanses!

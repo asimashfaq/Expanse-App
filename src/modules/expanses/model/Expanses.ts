@@ -1,5 +1,8 @@
 import Sequelize from 'sequelize/index'
 import { SequelizeAttributes } from '../../../interfaces/SequelizeAttributes'
+import { RatioAttributes } from '../../ratio/model/Ratio'
+import { UserAttributes } from '../../users/model/User'
+import { ExpansesShareAttributes } from './ExpansesShare'
 
 export interface ExpansesAttributes {
     id?: number
@@ -8,12 +11,12 @@ export interface ExpansesAttributes {
     total_amount: number
     ratioId: number
     userId: number
+    shares_with?: number[]
+    Ratio?: RatioAttributes
+    User?: UserAttributes
+    ExpansesShares?: ExpansesShareAttributes
     createdAt?: Date
     updatedAt?: Date
-}
-
-export interface ExpansesInput extends ExpansesAttributes {
-    shares_with: number[]
 }
 
 export interface ExpansesInstance
@@ -39,6 +42,10 @@ export const ExpanseFactory = (
     Expanses.associate = (models): void => {
         Expanses.belongsTo(models.Ratio, { foreignKey: 'ratioId', as: 'Ratio' })
         Expanses.belongsTo(models.User, { foreignKey: 'userId', as: 'User' })
+        Expanses.hasOne(models.ExpansesShares, {
+            foreignKey: 'expansesId',
+            as: 'ExpansesShares'
+        })
     }
 
     return Expanses

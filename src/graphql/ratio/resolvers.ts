@@ -8,7 +8,9 @@ const resolvers: IResolvers = {
         ratios: async (_, __, { db }: { db: DbInterface }) => {
             return await new RatioController(db).list()
         },
-        ratio: async (_, { id }, { db }: { db: DbInterface }) => {}
+        ratio: async (_, { id }, { db }: { db: DbInterface }) => {
+            return await db.Ratio.findByPk(id)
+        }
     },
     Mutation: {
         createRatio: async (
