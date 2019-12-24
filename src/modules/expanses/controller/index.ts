@@ -53,7 +53,7 @@ export default class ExpanseController extends BaseHandler {
                     },
                     { transaction: t }
                 )
-                await this.db.ExpansesShares.bulkCreate(
+                const expShares = await this.db.ExpansesShares.bulkCreate(
                     [
                         {
                             amount: personA,
@@ -70,6 +70,16 @@ export default class ExpanseController extends BaseHandler {
                     ],
                     { transaction: t }
                 )
+                const payment = await this.db.Payments.create({
+                    amount: personB,
+                    description: '-',
+                    userId: user.userId,
+                    expansesshareId: expShares[1].id
+                })
+                if (!expanse || !expShares || !payment) {
+                    t.rollback()
+                    throw Boom.notFound('Some thing goes wrong')
+                }
                 return _expanse
             })
         } catch (e) {

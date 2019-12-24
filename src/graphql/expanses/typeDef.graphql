@@ -15,7 +15,7 @@ type ExpansesShare{
     id: Int
     amount: Float
     user: User!
-    expansesId: Int
+    expanse: Expanses!
     status: String
 }
 type Expanses{

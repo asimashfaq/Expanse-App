@@ -1,0 +1,20 @@
+input  PaymentInput {
+    description: String
+    amount: Float!
+    expansesshareId: Int!
+}
+type Payment {
+    id: Int
+    description: String
+    amount: Float
+    user: User!
+    expansesShare: ExpansesShare!
+
+}
+type Query {
+    payments: [Payment!]!
+    payment(id: Int!): Payment!
+}
+type Mutation {
+    createPayment(input: PaymentInput): Payment!
+}

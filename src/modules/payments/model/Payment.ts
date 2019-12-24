@@ -1,14 +1,16 @@
 import Sequelize from 'sequelize/index'
 import { SequelizeAttributes } from '../../../interfaces/SequelizeAttributes'
+import { ExpansesShareAttributes } from '../../expanses/model/ExpansesShare'
+import { UserAttributes } from '../../users/model/User'
 
 export interface PaymentsAttributes {
     id?: number
-    name: string
     description: string
     amount: number
-    //userId: number
-    //expansesId: number
-    status: string
+    User?: UserAttributes
+    userId?: number
+    expansesshareId?: number
+    ExpansesShare?: ExpansesShareAttributes
     createdAt?: Date
     updatedAt?: Date
 }
@@ -21,10 +23,8 @@ export const PaymentsFactory = (
     DataTypes: Sequelize.DataTypes
 ) => {
     const attributes: SequelizeAttributes<PaymentsAttributes> = {
-        name: DataTypes.STRING,
         description: DataTypes.STRING,
-        amount: DataTypes.INTEGER,
-        status: DataTypes.STRING
+        amount: DataTypes.INTEGER
     }
 
     const Payments = sequelize.define<PaymentsInstance, PaymentsAttributes>(
@@ -35,6 +35,10 @@ export const PaymentsFactory = (
         Payments.belongsTo(models.ExpansesShares, {
             foreignKey: 'expansesshareId',
             as: 'expanseShares'
+        })
+        Payments.belongsTo(models.User, {
+            foreignKey: 'userId',
+            as: 'User'
         })
     }
 

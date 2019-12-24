@@ -53,12 +53,6 @@ const resolvers: IResolvers = {
             },
             info
         ) => {
-            console.log({
-                where: {
-                    expansesId: parent.id,
-                    userId: !parent.userId
-                }
-            })
             return await db.ExpansesShares.findAll({
                 where: {
                     expansesId: parent.id,
