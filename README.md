@@ -195,7 +195,7 @@ query{
 }
 ```
 ### ExpansesShares
-
+> `status` can be `Pending || Paid || Partial`
 ```graphql
 query{
   expansesShares(status:Pending){
