@@ -16,7 +16,7 @@ module.exports = {
     rules: {
         semi: ['error', 'never'],
         'no-unused-expressions': 'off',
-        indent: [2, 2, { SwitchCase: 1 }],
+        indent: [4, 4, { SwitchCase: 1 }],
         '@typescript-eslint/no-explicit-any': 0,
         '@typescript-eslint/explicit-function-return-type': [
             'error',

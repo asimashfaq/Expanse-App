@@ -4,6 +4,7 @@ import ExpanseController from '../../modules/expanses/controller'
 import { ExpansesAttributes } from '../../modules/expanses/model/Expanses'
 import { TokenAttributes } from '../../modules/token/model/Token'
 import sequelize = require('sequelize')
+import Boom = require('boom')
 
 const resolvers: IResolvers = {
     Expanses: {
@@ -55,10 +56,7 @@ const resolvers: IResolvers = {
         ) => {
             return await db.ExpansesShares.findAll({
                 where: {
-                    expansesId: parent.id,
-                    userId: {
-                        [sequelize.Op.not]: parent.userId
-                    } as any
+                    expansesId: parent.id
                 }
             })
         }
@@ -79,6 +77,27 @@ const resolvers: IResolvers = {
             info
         ) => {
             return await userLoader.load(parent.userId)
+        },
+        payment: async (
+            parent,
+            _,
+            {
+                db,
+                user,
+                userLoader
+            }: {
+                db: DbInterface
+                user: TokenAttributes | boolean
+                userLoader: any
+            },
+            info
+        ) => {
+            console.log(parent.id)
+            return await db.Payments.findAll({
+                where: {
+                    expansesshareId: parent.id
+                }
+            })
         }
     },
     Query: {
@@ -88,6 +107,10 @@ const resolvers: IResolvers = {
             { db, user }: { db: DbInterface; user: TokenAttributes | boolean },
             info
         ) => {
+            if (user === false) {
+                return Boom.forbidden('Invalid Token')
+            }
+
             return await new ExpanseController(db).list(user as TokenAttributes)
         },
         balance: async (
@@ -96,6 +119,9 @@ const resolvers: IResolvers = {
             { db, user }: { db: DbInterface; user: TokenAttributes | boolean },
             info
         ) => {
+            if (user === false) {
+                return Boom.forbidden('Invalid Token')
+            }
             return await new ExpanseController(db).balance(
                 user as TokenAttributes
             )
@@ -106,7 +132,26 @@ const resolvers: IResolvers = {
             { db }: { db: DbInterface },
             info
         ) => {
-            return await new ExpanseController(db).get(id)
+            const expanse = await new ExpanseController(db).get(id)
+            if (expanse == null) {
+                return Boom.notFound()
+            }
+            return expanse
+        },
+        expansesShares: async (
+            _,
+            { status }: { status: string },
+            { db, user }: { db: DbInterface; user: any },
+            info
+        ) => {
+            console.log('i called')
+            const expansesShares = await db.ExpansesShares.findAll({
+                where: {
+                    status: status.toLocaleLowerCase(),
+                    userId: user.userId
+                }
+            })
+            return expansesShares
         }
     },
     Mutation: {
@@ -115,6 +160,9 @@ const resolvers: IResolvers = {
             { input }: { input: ExpansesAttributes },
             { db, user }: { db: DbInterface; user: TokenAttributes | boolean }
         ) => {
+            if (user === false) {
+                return Boom.forbidden('Invalid Token')
+            }
             return await new ExpanseController(db).create(
                 input,
                 user as TokenAttributes

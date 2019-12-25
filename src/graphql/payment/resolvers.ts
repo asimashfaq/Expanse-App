@@ -5,6 +5,7 @@ import PaymentController from '../../modules/payments/controller'
 import { PaymentsInstance } from '../../modules/payments/model/Payment'
 import { TokenAttributes } from '../../modules/token/model/Token'
 import sequelize = require('sequelize')
+import Boom = require('boom')
 
 const resolvers: IResolvers = {
     Payment: {
@@ -59,9 +60,19 @@ const resolvers: IResolvers = {
             __,
             { db, user }: { db: DbInterface; user: any }
         ) => {
+            if (user === false) {
+                return Boom.forbidden('Invalid Token')
+            }
             return await new PaymentController(db).list(user)
         },
-        payment: async (_, { id }, { db }: { db: DbInterface }) => {
+        payment: async (
+            _,
+            { id },
+            { db, user }: { db: DbInterface; user: any }
+        ) => {
+            if (user === false) {
+                return Boom.forbidden('Invalid Token')
+            }
             return await new PaymentController(db).get(id)
         }
     },
@@ -71,6 +82,9 @@ const resolvers: IResolvers = {
             { input }: { input: PaymentsInstance },
             { db, user }: { db: DbInterface; user: any }
         ) => {
+            if (user === false) {
+                return Boom.forbidden('Invalid Token')
+            }
             return await new PaymentController(db).create(input, user)
         }
     }

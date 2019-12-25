@@ -31,8 +31,11 @@ export default class ExpanseController extends BaseHandler {
         if (peoples.length > 2) {
             throw Boom.notFound('Max two users allow')
         }
-        if (peoples.length < 1) {
+        if (peoples.length <= 1) {
             throw Boom.notFound('Minimum two users')
+        }
+        if (peoples[0] === peoples[1]) {
+            throw Boom.notAcceptable('You cannot share expanse with yourself')
         }
         const friend = await this.db.User.findByPk(peoples[0])
         if (!friend) {
@@ -70,16 +73,20 @@ export default class ExpanseController extends BaseHandler {
                     ],
                     { transaction: t }
                 )
-                const payment = await this.db.Payments.create({
-                    amount: personB,
-                    description: '-',
-                    userId: user.userId,
-                    expansesshareId: expShares[1].id
-                })
-                if (!expanse || !expShares || !payment) {
+                const payment = await this.db.Payments.create(
+                    {
+                        amount: personB,
+                        description: '-',
+                        userId: user.userId,
+                        expansesshareId: expShares[1].id
+                    },
+                    { transaction: t }
+                )
+                if (expanse == null || expShares == null || payment == null) {
                     t.rollback()
                     throw Boom.notFound('Some thing goes wrong')
                 }
+                // t.commit()
                 return _expanse
             })
         } catch (e) {

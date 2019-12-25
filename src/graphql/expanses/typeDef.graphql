@@ -16,6 +16,7 @@ type ExpansesShare{
     amount: Float
     user: User!
     expanse: Expanses!
+    payment: [Payment!]!
     status: String
 }
 type Expanses{
@@ -29,9 +30,15 @@ type Expanses{
     createdAt: String
     updatedAt: String
 }
+enum ShareStatus {
+    Paid
+    Pending
+    Partial
+}
 type Query {
   expanses: [Expanses!]!
   expanse(id: Int!): Expanses!
+  expansesShares(status: ShareStatus!): [ExpansesShare!]!
   balance: Balance!
 }
 type Mutation {
