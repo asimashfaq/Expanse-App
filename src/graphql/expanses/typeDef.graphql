@@ -9,6 +9,7 @@ input ExpansesInput{
 type Balance {
     receivable: Float
     paid: Float
+    payable: Float
     received: Float
 }
 type ExpansesShare{

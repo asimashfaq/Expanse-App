@@ -190,6 +190,7 @@ query{
   balance{
     receivable
     paid
+    recevied
     received
   }
 }

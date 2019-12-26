@@ -1,5 +1,6 @@
 import Sequelize from 'sequelize/index'
 import { SequelizeAttributes } from '../../../interfaces/SequelizeAttributes'
+import { PaymentsAttributes } from '../../payments/model/Payment'
 
 export interface ExpansesShareAttributes {
     id?: number
@@ -7,6 +8,7 @@ export interface ExpansesShareAttributes {
     userId: number
     expansesId: number
     status: string
+    Payments?: PaymentsAttributes[]
     createdAt?: Date
     updatedAt?: Date
 }
@@ -38,6 +40,10 @@ export const ExpanseShareFactory = (
         ExpansesShares.belongsTo(models.Expanses, {
             foreignKey: 'expansesId',
             as: 'Expanses'
+        })
+        ExpansesShares.hasMany(models.Payments, {
+            foreignKey: 'expansesshareId',
+            as: 'Payments'
         })
     }
 

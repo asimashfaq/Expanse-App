@@ -92,7 +92,6 @@ const resolvers: IResolvers = {
             },
             info
         ) => {
-            console.log(parent.id)
             return await db.Payments.findAll({
                 where: {
                     expansesshareId: parent.id
@@ -122,6 +121,9 @@ const resolvers: IResolvers = {
             if (user === false) {
                 return Boom.forbidden('Invalid Token')
             }
+            console.log(
+                await new ExpanseController(db).balance(user as TokenAttributes)
+            )
             return await new ExpanseController(db).balance(
                 user as TokenAttributes
             )

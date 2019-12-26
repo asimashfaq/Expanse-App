@@ -1,6 +1,7 @@
 import Boom from 'boom'
 import { BaseHandler } from '../../../helper/baseHandler'
 import { DbInterface } from '../../../interfaces/DbInterface'
+import { PaymentsAttributes } from '../../payments/model/Payment'
 import { TokenAttributes } from '../../token/model/Token'
 import { ExpansesAttributes, ExpansesInstance } from '../model/Expanses'
 import { ExpansesShareAttributes } from '../model/ExpansesShare'
@@ -107,27 +108,67 @@ export default class ExpanseController extends BaseHandler {
                     }
                 ]
             })
-            let receivable = 0,
-                paid = 0,
-                recevied = 0
-            explist.forEach(exp => {
-                const expshare = exp.ExpansesShares as ExpansesShareAttributes
-                if (expshare.status == 'pending') {
-                    receivable = receivable + expshare.amount
-                } else if (
-                    expshare.status == 'paid' &&
-                    expshare.userId == user.userId
-                ) {
-                    paid = paid + expshare.amount
-                } else {
-                    recevied = recevied + expshare.amount
+
+            const exppaylist = await this.db.ExpansesShares.findAll({
+                where: {
+                    userId: user.userId,
+                    status: 'pending'
                 }
             })
+            let receivable = 0
+            let paid = 0
+            let received = 0
+            let payable = 0
+            let partially = 0
+            exppaylist.forEach(exp => {
+                payable = payable + exp.amount
+            })
 
+            explist.forEach(exp => {
+                const expsharelist = exp.ExpansesShares as ExpansesShareAttributes[]
+                expsharelist.forEach(expshare => {
+                    if (expshare.status == 'pending') {
+                        receivable = receivable + expshare.amount
+                    } else if (
+                        expshare.status == 'paid' &&
+                        expshare.userId == user.userId
+                    ) {
+                        paid = paid + expshare.amount
+                    } else {
+                        received = received + expshare.amount
+                    }
+                })
+            })
+            const partialList = await this.db.ExpansesShares.findAll({
+                where: [
+                    {
+                        status: 'partial'
+                    }
+                ],
+                include: [
+                    {
+                        model: this.db.Payments,
+                        required: true,
+                        as: 'Payments',
+                        where: {
+                            userId: user.userId
+                        }
+                    }
+                ]
+            })
+            partialList.forEach(exp => {
+                const payments = exp.Payments as PaymentsAttributes[]
+                payments.forEach(payment => {
+                    partially = partially + payment.amount
+                })
+            })
+            receivable = receivable - partially
+            received = received + partially
             return {
-                receivable: receivable === null ? 0 : receivable,
-                paid: paid === null ? 0 : paid,
-                recevied: recevied === null ? 0 : recevied
+                receivable,
+                paid,
+                received,
+                payable
             }
         } catch (e) {
             throw e

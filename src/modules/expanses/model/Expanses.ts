@@ -14,7 +14,7 @@ export interface ExpansesAttributes {
     shares_with?: number[]
     Ratio?: RatioAttributes
     User?: UserAttributes
-    ExpansesShares?: ExpansesShareAttributes
+    ExpansesShares?: ExpansesShareAttributes[]
     createdAt?: Date
     updatedAt?: Date
 }
@@ -42,7 +42,7 @@ export const ExpanseFactory = (
     Expanses.associate = (models): void => {
         Expanses.belongsTo(models.Ratio, { foreignKey: 'ratioId', as: 'Ratio' })
         Expanses.belongsTo(models.User, { foreignKey: 'userId', as: 'User' })
-        Expanses.hasOne(models.ExpansesShares, {
+        Expanses.hasMany(models.ExpansesShares, {
             foreignKey: 'expansesId',
             as: 'ExpansesShares'
         })
